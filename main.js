@@ -76,31 +76,59 @@ function getAxis(operation, inverse) {
 function createCubes(scene) {
     var cubes = [];
     var cubesEdges = [];
+    var resolution = new THREE.Vector2( window.innerWidth, window.innerHeight - 200 );
     for (var x = 0; x < 3; x++) {
         for (var y = 0; y < 3; y++) {
             for (var z = 0; z < 3; z++) {
                 var materials = [
-                    new THREE.MeshPhongMaterial({color: 0xff7800}), // orange
-                    new THREE.MeshPhongMaterial({color: 0xd92b2c}), // red
-                    new THREE.MeshPhongMaterial({color: 0xffffff}), // white
-                    new THREE.MeshPhongMaterial({color: 0xe6e621}), // yellow
-                    new THREE.MeshPhongMaterial({color: 0x2f55cf}), // blue
-                    new THREE.MeshPhongMaterial({color: 0x26b143}), // green
+                    new THREE.MeshPhongMaterial({color: 0x5349DB}), // orange
+                    new THREE.MeshPhongMaterial({color: 0xDB2D43}), // red
+                    new THREE.MeshPhongMaterial({color: 0xF9F8EB}), // white
+                    new THREE.MeshPhongMaterial({color: 0xFFCD3C}), // yellow
+                    new THREE.MeshPhongMaterial({color: 0x549EC6}), // blue
+                    new THREE.MeshPhongMaterial({color: 0x47CA98}), // green
                 ];
-                
-                var faceMaterial = new THREE.MeshFaceMaterial(materials);
+
                 var cubeGeometry = new THREE.BoxGeometry(4, 4, 4);
-                var cube = new THREE.Mesh(cubeGeometry, faceMaterial);
+
+                var cube = new THREE.Mesh(cubeGeometry, materials);
                 
-                cube.position.x = (x - 1) * 4.1;
-                cube.position.y = (y - 1) * 4.1;
-                cube.position.z = (z - 1) * 4.1;
+                cube.position.x = (x - 1) * 4;
+                cube.position.y = (y - 1) * 4;
+                cube.position.z = (z - 1) * 4;
                 
-                var cubeEdges = new THREE.EdgesHelper(cube, 0x000000);
-                cubeEdges.material.linewidth = 3;
-                
+                var edges = new THREE.EdgesGeometry( cube.geometry );
+                var eMaterial = new THREE.MeshPhongMaterial( { color: 0x000000 } );
+                var line = new THREE.LineSegments( edges , eMaterial );
+                cube.add(line);
+
+                // console.log(cube.geometry.vertices);
+
+                // var edgeGeometry = new THREE.Geometry();
+                // cube.geometry.vertices.forEach(v1 => {
+                //     var added = false;
+                //     cube.geometry.vertices.forEach(v2 => {
+                //         if ((v1.x === v2.x && v1.y === v2.y && v1.z !== v2.z) ||
+                //         (v1.x === v2.x && v1.z === v2.z && v1.y !== v2.y) ||
+                //         (v1.z === v2.z && v1.y === v2.y && v1.x !== v2.x)) {
+                //             edgeGeometry.vertices.push(new THREE.Vector3(v1.x, v1.y, v1.z));
+                //             edgeGeometry.vertices.push(new THREE.Vector3(v2.x, v2.y, v2.z));
+                //             added = true;
+                //         }
+                //     });
+
+                //     if (added) {
+                //         var line = new MeshLine();
+                //         line.setGeometry( edgeGeometry );
+                //         var eMaterial = new MeshLineMaterial({color: new THREE.Color(0x000000), lineWidth: 1,sizeAttenuation: true,  resolution});
+                //         var edge = new THREE.Mesh(line.geometry, eMaterial);
+                //         cube.add(edge);
+                //         edgeGeometry = new THREE.Geometry();
+                //     }
+                // });
+
                 cubes.push(cube);
-                cubesEdges.push(cubeEdges);
+                // cubesEdges.push(edge);
             }
         }
     }
@@ -109,8 +137,9 @@ function createCubes(scene) {
         scene.add(cube);
     });
     
-    cubesEdges.forEach(function(cubeEdges) {
-        scene.add(cubeEdges);
+    cubesEdges.forEach(function(edge) {
+        // console.log(edge);
+        scene.add(edge);
     });
     
     return cubes;
@@ -246,18 +275,30 @@ function init() {
     var renderer = new THREE.WebGLRenderer();
     var clock = new THREE.Clock();
 
-    renderer.setClearColor(new THREE.Color(0xEEEEEE));
+    renderer.setClearColor(new THREE.Color(0xeeeeee));
     renderer.setSize(window.innerWidth, window.innerHeight - 200);
     
     var cubes = createCubes(scene);
     
-    var spotLight = new THREE.SpotLight(0xffffff);
-    spotLight.position.set(-30, 20, 60);
+    var spotLight = new THREE.PointLight(0xffffff);
+    spotLight.position.set(-30, 20, 10);
     spotLight.castShadow = true;
     spotLight.intensity = 0.3;
     scene.add(spotLight);
+
+    // var spotLight2 = new THREE.PointLight(0xffffff);
+    // spotLight.position.set(0, 0, 100);
+    // spotLight.castShadow = true;
+    // spotLight.intensity = 0.01;
+    // scene.add(spotLight2);
+
+    // var spotLight3 = new THREE.SpotLight(0xaaaaaa);
+    // spotLight3.position.set(80, 00, -80);
+    // spotLight3.castShadow = true;
+    // spotLight3.intensity = 0.9;
+    // scene.add(spotLight3);
     
-    var ambientLight = new THREE.AmbientLight(0xeeeeee);
+    var ambientLight = new THREE.AmbientLight(0xfffeee);
     scene.add(ambientLight);
     
     camera.position.x = -35;
