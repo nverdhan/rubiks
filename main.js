@@ -24,7 +24,7 @@ function action(cubes, scene, operation, inverse, done) {
     var curRotationAmount = 0;
     var endRotationAmount = Math.PI / 2;
     var tween = new TWEEN.Tween({ theta: curRotationAmount })
-        .to({ theta: endRotationAmount }, 100)
+        .to({ theta: endRotationAmount }, 5000)
         .onUpdate(function() {
             group.rotateOnAxis(axis, this.theta - curRotationAmount);
             curRotationAmount = this.theta;
@@ -448,8 +448,17 @@ function init() {
             }
         }
     };
+
+    function animate (cubes, scene) {
+        cubes.forEach(cube => {
+            cube.position.x += 4;
+        });
+    }
     
     document.getElementById("rotate").onclick = function() { tweener = rotateWholeCube(cubes, scene) || tweener; };
+    document.getElementById('animate').onclick = function () {
+        animate(cubes, scene);
+    }
 }
              
 function rotateAroundWorldAxis(object, axis, radians) {
